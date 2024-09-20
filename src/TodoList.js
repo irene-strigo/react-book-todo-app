@@ -16,11 +16,14 @@ export default function TodoList(props) {
                 <button
                   className="button is-success"
                   title="Пометить как сделанное"
-                  disabled={item.done}>&#9745;</button>
+                  disabled={item.done}
+                  onClick={(evt) => props.setDone(item.key)}
+                >&#9745;</button>
               </td>
               <td>
                 <button
                   className='button is-danger'
+                  onClick={(evt) => props.delete(item.key)}
                   title='удалить'>&#9746;</button>
               </td>
             </tr>
