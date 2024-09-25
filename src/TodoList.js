@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Link } from 'react-router-dom'
 export default function TodoList(props) {
   return (
     <section>
@@ -9,8 +9,10 @@ export default function TodoList(props) {
           {props.list.map((item) => (
             <tr key={item.key}>
               <td>
-                {item.done && <del>{item.title}</del>}
-                {!item.done && item.title}
+                <Link to={`/${item.key}`}>
+                  {item.done && <del>{item.title}</del>}
+                  {!item.done && item.title}
+                </Link>
               </td>
               <td>
                 <button

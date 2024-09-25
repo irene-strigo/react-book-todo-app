@@ -1,8 +1,10 @@
 import React from "react";
 import { Component } from 'react'
+import { Navigate } from "react-router-dom";
 export default class TodoAdd extends Component {
   constructor(props) {
     super(props)
+    this.state = { redirect: false }
     this.handleTitleChange = this.handleTitleChange.bind(this)
     this.handleDescChange = this.handleDescChange.bind(this)
     this.handleImageChange = this.handleImageChange.bind(this)
@@ -29,7 +31,7 @@ export default class TodoAdd extends Component {
       const fileReader = new FileReader()
       const that = this;
       fileReader.onload = () => {
-        that.formData.image = fileReader.reasult;
+        that.formData.image = fileReader.result;
       }
       fileReader.readAsDataURL(cFiles[0])
     } else
@@ -43,52 +45,54 @@ export default class TodoAdd extends Component {
     newDeed.createdAt = date.toLocaleString()
     newDeed.key = date.getTime()
     this.props.add(newDeed)
-    this.clearFormData()
-    evt.target.reset()
+    this.setState((state) => ({ redirect: true }))
   }
   render() {
-    return (
+    if (this.state.redirect)
+      return <Navigate to='/' />
+    else
+      return (
 
-      <section>
-        <h1>Создание нового дела</h1>
-        <form onSubmit={this.handleFormSubmit}>
-          <div className="field">
-            <label className="label">Заголовок</label>
-            <div className="control">
-              <input className="input" onChange={this.handleTitleChange} />
+        <section>
+          <h1>Создание нового дела</h1>
+          <form onSubmit={this.handleFormSubmit}>
+            <div className="field">
+              <label className="label">Заголовок</label>
+              <div className="control">
+                <input className="input" onChange={this.handleTitleChange} />
+              </div>
             </div>
-          </div>
-          <div className="field">
-            <label className="label">Примечание</label>
-            <div className="control">
-              <textarea className="textarea" onChange={this.handleDescChange} />
+            <div className="field">
+              <label className="label">Примечание</label>
+              <div className="control">
+                <textarea className="textarea" onChange={this.handleDescChange} />
+              </div>
             </div>
-          </div>
-          <div className="field">
-            <div className="file">
-              <label className="file-label">
-                <input className="file-input"
-                  type="file" accept="image/*"
-                  onChange={this.handleImageChange} />
-                <span className="file-cta">
-                  <span className="file-label">
-                    Графическая иллюстрация...
+            <div className="field">
+              <div className="file">
+                <label className="file-label">
+                  <input className="file-input"
+                    type="file" accept="image/*"
+                    onChange={this.handleImageChange} />
+                  <span className="file-cta">
+                    <span className="file-label">
+                      Графическая иллюстрация...
+                    </span>
                   </span>
-                </span>
-              </label>
+                </label>
+              </div>
             </div>
-          </div>
-          <div className=" field is-grouped is-grouped-right">
-            <div className="control">
-              <input type="reset" className="button is-link is-light" value='Сброс' />
+            <div className=" field is-grouped is-grouped-right">
+              <div className="control">
+                <input type="reset" className="button is-link is-light" value='Сброс' />
+              </div>
+              <div className="control">
+                <input type="submit" className="button is-primary" value="создать дело" />
+              </div>
             </div>
-            <div className="control">
-              <input type="submit" className="button is-primary" value="создать дело" />
-            </div>
-          </div>
-        </form>
+          </form>
 
-      </section>
-    )
+        </section>
+      )
   }
 }
