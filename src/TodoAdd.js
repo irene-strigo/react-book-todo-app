@@ -1,6 +1,7 @@
 import React from "react";
 import { Component } from 'react'
 import { Navigate } from "react-router-dom";
+import { add } from "./api";
 export default class TodoAdd extends Component {
   constructor(props) {
     super(props)
@@ -37,14 +38,14 @@ export default class TodoAdd extends Component {
     } else
       this.formData.image = ''
   }
-  handleFormSubmit(evt) {
+  async handleFormSubmit(evt) {
     evt.preventDefault()
     const newDeed = { ...this.formData }
     const date = new Date()
     newDeed.done = false
     newDeed.createdAt = date.toLocaleString()
-    newDeed.key = date.getTime()
-    this.props.add(newDeed)
+    const addedDeed = await add(this.props.currentUser, newDeed)
+    this.props.add(addedDeed)
     this.setState((state) => ({ redirect: true }))
   }
   render() {
