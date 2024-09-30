@@ -2,7 +2,7 @@ import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth/web-
 import { getDatabase, ref, push, set, get, query } from "firebase/database";
 import { remove } from "firebase/database";
 export function del(user, key) {
-  return remove(ref(getDatabase(), `users/${user.uid}/todos/${key}`), true)
+  return remove(ref(getDatabase(), `/posts/users/${user.uid}/todos/${key}`), true)
 }
 export async function login(email, password) {
   try {
@@ -21,7 +21,7 @@ export async function add(user, deed) {
   const oRef = await push(
     ref(
       getDatabase(),
-      `users/${user.uid}/todos`
+      `/posts/users/${user.uid}/todos`
     )
   );
   await set(oRef, deed);
@@ -32,7 +32,7 @@ export async function add(user, deed) {
 }
 
 export async function getList(user) {
-  const oSnapshot = await get(query(ref(getDatabase(), `users/${user.uid}/todos`)));
+  const oSnapshot = await get(query(ref(getDatabase(), `/posts/users/${user.uid}/todos`)));
   const oArr = [];
   let oDeed;
   oSnapshot.forEach((oDoc) => {
@@ -43,5 +43,5 @@ export async function getList(user) {
   return oArr
 }
 export function setDone(user, key) {
-  return set(ref(getDatabase(), `users/${user.uid}/todos/${key}/done`), true)
+  return set(ref(getDatabase(), `/posts/users/${user.uid}/todos/${key}/done`), true)
 }

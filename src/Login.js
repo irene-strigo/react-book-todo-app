@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { login } from './api';
+import { Navigate } from 'react-router-dom';
 
 export default class Login extends Component {
   constructor(props) {
@@ -30,34 +31,37 @@ export default class Login extends Component {
   }
 
   render() {
-    return (
-      <section>
-        <h1>Вход</h1>
-        <form onSubmit={this.handleFormSubmit}>
-          <div className='field'>
-            <label className='label'>Адрес электронной почты</label>
-            <div className='control'>
-              <input type='email' className='input'
-                onChange={this.handleEmailChange} />
+    if (this.props.currentUser) {
+      return <Navigate to='/' replace />
+    } else
+      return (
+        <section>
+          <h1>Вход</h1>
+          <form onSubmit={this.handleFormSubmit}>
+            <div className='field'>
+              <label className='label'>Адрес электронной почты</label>
+              <div className='control'>
+                <input type='email' className='input'
+                  onChange={this.handleEmailChange} />
+              </div>
             </div>
-          </div>
-          <div className='field'>
-            <label className='label'>Пароль</label>
-            <div className='control'>
-              <input type='password' className='input'
-                onChange={this.handlePasswordChange} />
+            <div className='field'>
+              <label className='label'>Пароль</label>
+              <div className='control'>
+                <input type='password' className='input'
+                  onChange={this.handlePasswordChange} />
+              </div>
             </div>
-          </div>
-          <div className='field is-grouped is-grouped-right'>
-            <div className='control'>
-              <input type='reset' className='button is-link is-light' value="сброс" />
+            <div className='field is-grouped is-grouped-right'>
+              <div className='control'>
+                <input type='reset' className='button is-link is-light' value="сброс" />
+              </div>
+              <div className='control'>
+                <input type='submit' className='button is-primary' value="войти" />
+              </div>
             </div>
-            <div className='control'>
-              <input type='submit' className='button is-primary' value="войти" />
-            </div>
-          </div>
-        </form>
-      </section>
-    )
+          </form>
+        </section>
+      )
   }
 }
