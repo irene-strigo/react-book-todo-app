@@ -21,7 +21,7 @@ export async function add(user, deed) {
   const oRef = await push(
     ref(
       getDatabase(),
-      `/posts/users/${user.uid}/todos`
+      `posts/users/${user.uid}/todos`
     )
   );
   await set(oRef, deed);
