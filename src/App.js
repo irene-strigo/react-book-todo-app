@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+
+import { SetDoneContext, DeleteContext, ThemeContext } from './contexts'
 import TodoList from './TodoList'
 import TodoAdd from './TodoAdd'
 import TodoDetail from './TodoDetail'
@@ -11,14 +13,18 @@ import { HashRouter, Routes, Route, NavLink } from 'react-router-dom'
 import { getList } from './api'
 import { setDone } from './api'
 import { del } from './api'
+import { themes } from './Themes'
+
 
 export default class App extends Component {
+
   constructor(props) {
     super(props)
     this.state = {
       data: [],
       showMenu: false,
-      currentUser: undefined
+      currentUser: undefined,
+      currentTheme: themes.black,
     }
     this.authStateChanged = this.authStateChanged.bind(this)
     this.setDone = this.setDone.bind(this)
@@ -26,7 +32,7 @@ export default class App extends Component {
     this.add = this.add.bind(this)
     this.showMenu = this.showMenu.bind(this)
     this.getDeed = this.getDeed.bind(this)
-
+    this.changeTheme = this.changeTheme.bind(this)
   }
   async authStateChanged(user) {
     this.setState((state) => ({ currentUser: user }))
@@ -69,103 +75,140 @@ export default class App extends Component {
     this.state.data.push(deed)
     this.setState((state) => ({}))
   }
-  render() {
-    console.log(this.state.data)
-    return (
-      <HashRouter>
-        <nav className='navbar is-light'>
-          <div className='navbar-brand'>
-            <NavLink
-              to='/'
-              className={({ isActive }) =>
-                'navbar-item is-uppercase' +
-                (isActive ? 'is-active' : '')
-              }
-            >
-              {this.state.currentUser ? this.state.currentUser.email : "Todos"}
-            </NavLink>
-            <a href='/'
-              className={this.state.showMenu ? 'navbar-burger is-active' : 'navbar-burger'}
-              onClick={this.showMenu}>
-              <span></span>
-              <span></span>
-              <span></span>
-            </a>
-          </div>
-          <div className={this.state.showMenu ? 'navbar-menu is-active' : 'navbar-menu'}
-            onClick={this.showMenu}>
+  changeTheme(theme) {
+    this.setState((state) => ({ currentTheme: theme }))
 
-            <div className='navbar-start'>
+  }
+
+  render() {
+
+    return (
+      <>
+        <HashRouter>
+
+          <nav className='navbar is-light'>
+
+            <div className='navbar-brand'>
+              <NavLink
+                to='/'
+                className={({ isActive }) =>
+                  'navbar-item is-uppercase' +
+                  (isActive ? 'is-active' : '')
+                }
+              >
+                {this.state.currentUser ? this.state.currentUser.email : "Todos"}
+              </NavLink>
+              <a href='/'
+                className={this.state.showMenu ? 'navbar-burger is-active' : 'navbar-burger'}
+                onClick={this.showMenu}>
+                <span></span>
+                <span></span>
+                <span></span>
+              </a>
+            </div>
+            <button style={{ padding: '5px', margin: '5px', border: '1px solid black' }} onClick={(evt) => {
+              evt.preventDefault()
+              this.changeTheme(themes.white)
+            }}>white</button>
+            <button style={{ padding: '5px', margin: '5px', border: '1px solid black' }}
+              onClick={(evt) => {
+                evt.preventDefault()
+                this.changeTheme(themes.black)
+              }}
+            >black</button>
+            <button style={{ padding: '5px', margin: '5px', border: '1px solid black' }}
+              onClick={(evt) => {
+                evt.preventDefault()
+                this.changeTheme(themes.grey)
+              }}
+            >grey</button>
+
+            <div className={this.state.showMenu ? 'navbar-menu is-active' : 'navbar-menu'}
+              onClick={this.showMenu}>
+
+              <div className='navbar-start'>
+                {this.state.currentUser && (
+                  <NavLink
+                    to='/add'
+                    className={({ isActive }) =>
+                      'navbar-item' +
+                      (isActive ? 'is-active' : '')
+                    }
+                  >Создать дело
+                  </NavLink>
+                )}
+                {!this.state.currentUser && (
+                  <NavLink to="/register" className={({ isActive }) => 'navbar-item' + (isActive ? 'is-active' : '')}>
+                    Зарегистрироваться
+                  </NavLink>
+                )}
+                {!this.state.currentUser && (
+                  <NavLink to="/login" className={({ isActive }) => 'navbar-item' + (isActive ? 'is-active' : '')}>
+                    Вход
+                  </NavLink>
+                )}
+              </div>
               {this.state.currentUser && (
-                <NavLink
-                  to='/add'
-                  className={({ isActive }) =>
-                    'navbar-item' +
-                    (isActive ? 'is-active' : '')
-                  }
-                >Создать дело
-                </NavLink>
-              )}
-              {!this.state.currentUser && (
-                <NavLink to="/register" className={({ isActive }) => 'navbar-item' + (isActive ? 'is-active' : '')}>
-                  Зарегистрироваться
-                </NavLink>
-              )}
-              {!this.state.currentUser && (
-                <NavLink to="/login" className={({ isActive }) => 'navbar-item' + (isActive ? 'is-active' : '')}>
-                  Вход
-                </NavLink>
+                <div className='navbar-end'>
+                  <NavLink to="/logout" className={({ isActive }) => 'navbar-item' + (isActive ? 'is-active' : '')}>
+                    Выйти
+                  </NavLink>
+                </div>
               )}
             </div>
-            {this.state.currentUser && (
-              <div className='navbar-end'>
-                <NavLink to="/logout" className={({ isActive }) => 'navbar-item' + (isActive ? 'is-active' : '')}>
-                  Выйти
-                </NavLink>
-              </div>
-            )}
-          </div>
-        </nav>
-        <main className='content px-6 mt-6'>
-          <Routes>
-            <Route path='/' element={
-              <TodoList
-                list={this.state.data}
-                setDone={this.setDone}
-                delete={this.delete}
-                currentUser={this.state.currentUser} />
-            } />
-            <Route path='/add' element={
-              <TodoAdd add={this.add}
-                currentUser={this.state.currentUser}
-              />
-            } />
-            <Route path='/:key' element={
-              <TodoDetail
-                getDeed={this.getDeed}
-                currentUser={this.state.currentUser} />
-            } />
-            <Route path='/register' element={
-              <Register currentUser={this.state.currentUser} />
-            }
-            />
-            <Route path='/logout' element={
-              <Logout currentUser={this.state.currentUser} />
-            }
-            />
-            <Route path='/login' element={
-              <Login currentUser={this.state.currentUser} />
-            }
-            />
+          </nav>
+          <ThemeContext.Provider value={this.state.currentTheme}>
+            <main className='content px-6 mt-6'>
+              <SetDoneContext.Provider value={this.setDone}>
+                <DeleteContext.Provider value={this.delete}>
 
-          </Routes>
+                  <TodoList list={this.state.data} />
 
-        </main>
-      </HashRouter>
+                </DeleteContext.Provider>
+              </SetDoneContext.Provider>
+
+              <Routes>
+                <Route path='/' element={
+                  <TodoList
+                    list={this.state.data}
+                    setDone={this.setDone}
+                    delete={this.delete}
+                    currentUser={this.state.currentUser} />
+                } />
+                <Route path='/add' element={
+                  <TodoAdd add={this.add}
+                    currentUser={this.state.currentUser}
+                  />
+                } />
+                <Route path='/:key' element={
+                  <TodoDetail
+                    getDeed={this.getDeed}
+                    currentUser={this.state.currentUser} />
+                } />
+                <Route path='/register' element={
+                  <Register currentUser={this.state.currentUser} />
+                }
+                />
+                <Route path='/logout' element={
+                  <Logout currentUser={this.state.currentUser} />
+                }
+                />
+                <Route path='/login' element={
+                  <Login currentUser={this.state.currentUser} />
+                }
+                />
+
+              </Routes>
+
+            </main>
+          </ThemeContext.Provider>
+
+        </HashRouter >
+
+      </>
     );
   }
 }
-
 
 
 

@@ -1,40 +1,50 @@
 import React from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useContext } from 'react'
+import { TitleContext, ThemeContext } from './contexts'
+import DoneButton from './DoneButton'
+import DeleteButton from './DeleteButton'
+
+
 export default function TodoList(props) {
-  if (!props.currentUser) {
-    return <Navigate to='/login' replace />
-  } else
-    return (
-      <section>
-        <h1>Дела</h1>
-        <table className="table is-hoverable is-fullWidth">
-          <tbody>
-            {props.list.map((item) => (
-              <tr key={item.key}>
-                <td>
-                  <Link to={`/${item.key}`}>
-                    {item.done && <del>{item.title}</del>}
-                    {!item.done && item.title}
-                  </Link>
-                </td>
-                <td>
-                  <button
-                    className="button is-success"
-                    title="Пометить как сделанное"
-                    disabled={item.done}
-                    onClick={(evt) => props.setDone(item.key)}
-                  >&#9745;</button>
-                </td>
-                <td>
-                  <button
-                    className='button is-danger'
-                    onClick={(evt) => props.delete(item.key)}
-                    title='удалить'>&#9746;</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-    )
+  const title = useContext(TitleContext)
+  const themesValue = useContext(ThemeContext);
+  console.log(themesValue)
+  /* if (!props.currentUser) {
+     return <Navigate to='/login' replace />
+   } else*/
+  return (
+
+    <section style={themesValue}>
+
+      <h1 style={themesValue}>{title}</h1>
+
+      <table className="table is-hoverable is-fullWidth" style={themesValue}>
+        <tbody>
+          {props.list.map((item) => (
+
+            <tr key={item.key}>
+              <td>
+
+                <Link to={`/${item.key}`} >
+                  {item.done && <del>{item.title}</del>}
+                  {!item.done && item.title}
+                </Link>
+              </td>
+              <td>
+                <DoneButton item={item} />
+
+              </td>
+              <td>
+                <DeleteButton item={item} />
+
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+    </section>
+
+  )
 }
