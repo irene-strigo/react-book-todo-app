@@ -14,8 +14,10 @@ import { getList } from './api'
 import { setDone } from './api'
 import { del } from './api'
 import { themes } from './Themes'
-
-
+import { Link } from 'react-router-dom'
+import DoneButton from './DoneButton'
+import DeleteButton from './DeleteButton'
+import TodoListNew from './TodoListNew'
 export default class App extends Component {
 
   constructor(props) {
@@ -163,7 +165,32 @@ export default class App extends Component {
                 <DeleteContext.Provider value={this.delete}>
 
                   <TodoList list={this.state.data} />
-
+                  <TodoListNew list={this.state.data}
+                    render={(item) => (
+                      <tr key={item.key}>
+                        <td>
+                          {item.title}
+                        </td>
+                      </tr>
+                    )}
+                  />
+                  <TodoListNew list={this.state.data}
+                    render={(item) => (
+                      <tr key={item.key}>
+                        <td>
+                          <Link to={`/${item.key}`}>
+                            {item.done && <del>{item.title}</del>}
+                            {!item.done && item.title}
+                          </Link>
+                        </td>
+                        <td>
+                          <DoneButton item={item} setDone={this.setDone} />
+                        </td>
+                        <td>
+                          <DeleteButton item={item} delete={this.delete} />
+                        </td>
+                      </tr>)}
+                  />
                 </DeleteContext.Provider>
               </SetDoneContext.Provider>
 
